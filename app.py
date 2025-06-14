@@ -6,7 +6,7 @@ import openai
 app = Flask(__name__)
 
 VERIFY_TOKEN = "asistentevc123"
-PAGE_ACCESS_TOKEN = "Capilla12"
+PAGE_ACCESS_TOKEN = "asistentevc123
 PHONE_NUMBER_ID = "732770036577471"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 

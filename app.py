@@ -9,7 +9,8 @@ VERIFY_TOKEN = "asistentevc123"
 PAGE_ACCESS_TOKEN = "EAAUNeE6PkcMBO3AZBYk49e64w3sgnloBLAZCpWgP7FIsMETvoZBlH9bN8mfwFzbwZCZA69zr39UIDAcqBSxrKvx7VPzHbvVxhHZA9QUX6YrFeIOsIX1Hf2yPGcp6IoCQVu5CZBRsvVm8hhWjEFZAWI6gEB4YldZBfyzETpyIXREUZBBNgLyCCYxZCmAEZAxeVIg3QvDAsz0aYZB58bLlEhDfFOkJHAFqzVCZAJqItLZCYlrDzJQWBmZB"
 PHONE_NUMBER_ID = "732770036577471"
 
-openai.api_key = os.getenv("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")
+openai.api_key = os.getenv("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"
+")
 
 SYSTEM_PROMPT = """
 Eres la Asistente de V&C, recepcionista virtual de la clínica dental V&C Odontólogos en Perú...

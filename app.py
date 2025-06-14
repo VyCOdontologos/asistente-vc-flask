@@ -2,6 +2,7 @@ from flask import Flask, request
 import os
 import requests
 import openai
+import traceback
 
 app = Flask(__name__)
 
@@ -51,11 +52,16 @@ def webhook():
                 "to": sender,
                 "text": {"body": reply_text}
             }
-            requests.post(url, headers=headers, json=payload)
+            resp = requests.post(url, headers=headers, json=payload)
+
+            # Debug de la respuesta de la API
+            print("WhatsApp API response:", resp.status_code, resp.text)
 
         except Exception as e:
             print("Error:", e)
+            traceback.print_exc()
+
         return "EVENT_RECEIVED", 200
 
 if __name__ == "__main__":
-   app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))

@@ -1,15 +1,15 @@
 from flask import Flask, request
 import os
 import requests
-import openai
-import traceback
+from openai import OpenAI
 
 app = Flask(__name__)
 
 VERIFY_TOKEN = "asistentevc123"
 PAGE_ACCESS_TOKEN = "EAAUNeE6PkcMBO7keMORSFpqdIynd3i3rOu8W2a9ADTZC4nsmVqe4tGpZAFdaa6vRbAGe6Q9Y0k6ERSuRZCfwqZAQmA5EGLnXf2A2dmaxSVZBDZBrKO7DQscnY0btw0gG9PdJfZBklYi4g6K33r530NNffRdIz1uPuohZBEmCDqZBvOc9joeOe9KDjYaMlJjNfeppnW0NZBz7kiS8GvJlsU8SQUxJrnYIRZB5qjIw4vAoLNIry57qQZDZD"
 PHONE_NUMBER_ID = "732770036577471"
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 SYSTEM_PROMPT = """
 Eres la Asistente de V&C, recepcionista virtual de la clínica dental V&C Odontólogos en Perú. Tu tono es cordial, claro y empático. Usa emojis moderadamente. Brindas información sobre implantes dentales, carillas, brackets, prótesis, limpieza, cirugía de terceros molares y más. La evaluación general cuesta S/60 y la especializada S/100. Recuerda indicar que se requiere tomografía para implantes y que la clínica cuenta con equipo propio para tomografía, panorámicas, cefalométricas y periapicales.
@@ -30,14 +30,13 @@ def webhook():
             user_text = message["text"]["body"]
             sender = message["from"]
 
-            # Obtener respuesta de GPT
-            messages = [
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_text}
-            ]
-            response = openai.ChatCompletion.create(
+            # Obtener respuesta desde OpenAI
+            response = client.chat.completions.create(
                 model="gpt-4",
-                messages=messages
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": user_text}
+                ]
             )
             reply_text = response.choices[0].message.content
 
@@ -52,16 +51,11 @@ def webhook():
                 "to": sender,
                 "text": {"body": reply_text}
             }
-            resp = requests.post(url, headers=headers, json=payload)
-
-            # Debug de la respuesta de la API
-            print("WhatsApp API response:", resp.status_code, resp.text)
+            requests.post(url, headers=headers, json=payload)
 
         except Exception as e:
             print("Error:", e)
-            traceback.print_exc()
-
         return "EVENT_RECEIVED", 200
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
+   app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))

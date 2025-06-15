@@ -6,7 +6,7 @@ import openai
 app = Flask(__name__)
 
 VERIFY_TOKEN = "asistentevc123"
-PAGE_ACCESS_TOKEN = os.getenv("EAAUNeE6PkcMBO3AZBYk49e64w3sgnloBLAZCpWgP7FIsMETvoZBlH9bN8mfwFzbwZCZA69zr39UIDAcqBSxrKvx7VPzHbvVxhHZA9QUX6YrFeIOsIX1Hf2yPGcp6IoCQVu5CZBRsvVm8hhWjEFZAWI6gEB4YldZBfyzETpyIXREUZBBNgLyCCYxZCmAEZAxeVIg3QvDAsz0aYZB58bLlEhDfFOkJHAFqzVCZAJqItLZCYlrDzJQWBmZB")  # Debes definirla como variable en Render
+PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
 PHONE_NUMBER_ID = "732770036577471"
 
 openai.api_key = os.getenv("OPENAI_API_KEY")

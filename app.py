@@ -1,3 +1,9 @@
+├── src/
+│   └── app.py
+├── Procfile
+├── requirements.txt
+
+# src/app.py
 from flask import Flask, request
 import os
 import requests
@@ -20,28 +26,26 @@ Nunca respondas fuera del rol de asistente clínica.
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
     if request.method == "GET":
-        if (request.args.get("hub.mode") == "subscribe" and
-            request.args.get("hub.verify_token") == VERIFY_TOKEN):
+        if (
+            request.args.get("hub.mode") == "subscribe"
+            and request.args.get("hub.verify_token") == VERIFY_TOKEN
+        ):
             return request.args.get("hub.challenge"), 200
         return "Unauthorized", 403
 
     if request.method == "POST":
         data = request.get_json()
-        print("📅 Webhook recibido:", data)
+        print("📥 Webhook recibido:", data)
 
         try:
             entry = data.get("entry", [])[0]
             changes = entry.get("changes", [])[0]
             value = changes.get("value", {})
-            messages = value.get("messages", [])
+            message = value.get("messages", [])[0]
 
-            if not messages:
-                print("⚠️ No hay mensajes. Probablemente fue una reacción o mensaje de sistema.")
-                return "EVENT_RECEIVED", 200
-
-            message = messages[0]
             user_text = message["text"]["body"]
             sender = message["from"]
+
             print("🗣 Usuario dijo:", user_text)
 
             chat_response = client.chat.completions.create(
@@ -77,3 +81,14 @@ def webhook():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
+
+
+# Procfile
+web: gunicorn src.app:app
+
+
+# requirements.txt
+Flask==2.3.3
+requests==2.31.0
+openai>=1.0.0,<2.0.0
+gunicorn==21.2.0

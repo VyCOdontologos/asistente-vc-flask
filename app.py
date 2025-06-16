@@ -35,7 +35,6 @@ def webhook():
             sender = message["from"]
             print("🗣 Usuario dijo:", user_text)
 
-            # GPT-4 respuesta (nuevo SDK OpenAI >= 1.0.0)
             chat_response = client.chat.completions.create(
                 model="gpt-4",
                 messages=[
@@ -47,7 +46,6 @@ def webhook():
             reply_text = chat_response.choices[0].message.content.strip()
             print("🤖 GPT respondió:", reply_text)
 
-            # Enviar mensaje a WhatsApp
             url = f"https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages"
             headers = {
                 "Authorization": f"Bearer {PAGE_ACCESS_TOKEN}",

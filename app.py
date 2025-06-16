@@ -1,15 +1,15 @@
 from flask import Flask, request
 import os
 import requests
-import openai
+from openai import OpenAI
 
 app = Flask(__name__)
 
 VERIFY_TOKEN = "asistentevc123"
 PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
-PHONE_NUMBER_ID = "732770036577471"  # Este es el número real (ya conectado)
+PHONE_NUMBER_ID = "732770036577471"
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 SYSTEM_PROMPT = """
 Eres la Asistente de V&C, recepcionista virtual de la clínica dental V&C Odontólogos en Perú. 
@@ -35,8 +35,8 @@ def webhook():
             sender = message["from"]
             print("🗣 Usuario dijo:", user_text)
 
-            # Respuesta GPT
-            gpt_response = openai.ChatCompletion.create(
+            # Usando la nueva API de openai >=1.0.0
+            gpt_response = client.chat.completions.create(
                 model="gpt-4",
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
@@ -47,7 +47,6 @@ def webhook():
             reply_text = gpt_response.choices[0].message.content.strip()
             print("🤖 GPT respondió:", reply_text)
 
-            # Enviar mensaje a WhatsApp
             url = f"https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages"
             headers = {
                 "Authorization": f"Bearer {PAGE_ACCESS_TOKEN}",

@@ -7,12 +7,14 @@ app = Flask(__name__)
 
 VERIFY_TOKEN = "asistentevc123"
 PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
-PHONE_NUMBER_ID = "732770036577471"
+PHONE_NUMBER_ID = "732770036577471"  # Este es el número real (ya conectado)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 SYSTEM_PROMPT = """
-Eres la Asistente de V&C, recepcionista virtual de la clínica dental V&C Odontólogos en Perú...
+Eres la Asistente de V&C, recepcionista virtual de la clínica dental V&C Odontólogos en Perú. 
+Saluda con amabilidad, responde dudas frecuentes, ofrece información sobre tratamientos como carillas, implantes, brackets y limpieza dental.
+Nunca respondas fuera del rol de asistente clínica.
 """
 
 @app.route("/webhook", methods=["GET", "POST"])
@@ -31,10 +33,9 @@ def webhook():
             message = data["entry"][0]["changes"][0]["value"]["messages"][0]
             user_text = message["text"]["body"]
             sender = message["from"]
-
             print("🗣 Usuario dijo:", user_text)
 
-            # Obtener respuesta de GPT
+            # Respuesta GPT
             gpt_response = openai.ChatCompletion.create(
                 model="gpt-4",
                 messages=[
@@ -46,7 +47,7 @@ def webhook():
             reply_text = gpt_response.choices[0].message.content.strip()
             print("🤖 GPT respondió:", reply_text)
 
-            # Enviar a WhatsApp
+            # Enviar mensaje a WhatsApp
             url = f"https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages"
             headers = {
                 "Authorization": f"Bearer {PAGE_ACCESS_TOKEN}",

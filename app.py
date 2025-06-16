@@ -30,17 +30,13 @@ def webhook():
 
     if request.method == "POST":
         data = request.get_json()
-        print("📥 Webhook recibido:", data)  # 👈 Esto imprimirá todo lo que llega
+        print("📥 Webhook recibido:", data)
 
         try:
             message = data["entry"][0]["changes"][0]["value"]["messages"][0]
             user_text = message["text"]["body"]
             sender = message["from"]
             print("🗣 Usuario dijo:", user_text)
-        except Exception as e:
-            print("❌ Error extrayendo mensaje:", e)
-
-        return "EVENT_RECEIVED", 200
 
             # Chat con GPT
             chat_response = client.chat.completions.create(

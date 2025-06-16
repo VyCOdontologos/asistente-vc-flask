@@ -27,10 +27,19 @@ def webhook():
 
     if request.method == "POST":
         data = request.get_json()
-        print("📥 Webhook recibido:", data)
+        print("📅 Webhook recibido:", data)
 
         try:
-            message = data["entry"][0]["changes"][0]["value"]["messages"][0]
+            entry = data.get("entry", [])[0]
+            changes = entry.get("changes", [])[0]
+            value = changes.get("value", {})
+            messages = value.get("messages", [])
+
+            if not messages:
+                print("⚠️ No hay mensajes. Probablemente fue una reacción o mensaje de sistema.")
+                return "EVENT_RECEIVED", 200
+
+            message = messages[0]
             user_text = message["text"]["body"]
             sender = message["from"]
             print("🗣 Usuario dijo:", user_text)

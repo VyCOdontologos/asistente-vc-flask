@@ -5,12 +5,15 @@ from openai import OpenAI
 
 app = Flask(__name__)
 
+# Tokens y configuración
 VERIFY_TOKEN = "asistentevc123"
 PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
-PHONE_NUMBER_ID = "732770036577471"  # Número real
+PHONE_NUMBER_ID = "732770036577471"  # número de producción real
 
+# Cliente OpenAI (nuevo SDK)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# Instrucciones para el asistente
 SYSTEM_PROMPT = """
 Eres la Asistente de V&C, recepcionista virtual de la clínica dental V&C Odontólogos en Perú. 
 Saluda con amabilidad, responde dudas frecuentes, ofrece información sobre tratamientos como carillas, implantes, brackets y limpieza dental.
@@ -35,9 +38,7 @@ def webhook():
             sender = message["from"]
             print("🗣 Usuario dijo:", user_text)
 
-            # GPT-4 respuesta (nuevo SDK OpenAI >= 1.0.0)
-            print("🧠 Enviando a OpenAI:", user_text)
-
+            # Chat con GPT
             chat_response = client.chat.completions.create(
                 model="gpt-4",
                 messages=[
@@ -46,12 +47,10 @@ def webhook():
                 ]
             )
 
-            print("✅ Respuesta de OpenAI recibida:", chat_response)
-
             reply_text = chat_response.choices[0].message.content.strip()
             print("🤖 GPT respondió:", reply_text)
 
-            # Enviar mensaje a WhatsApp
+            # Enviar respuesta a WhatsApp
             url = f"https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages"
             headers = {
                 "Authorization": f"Bearer {PAGE_ACCESS_TOKEN}",
@@ -68,7 +67,7 @@ def webhook():
             print("📬 Respuesta de WhatsApp:", response.status_code, response.text)
 
         except Exception as e:
-            print("❌ Error general:", e)
+            print("❌ Error:", e)
 
         return "EVENT_RECEIVED", 200
 
